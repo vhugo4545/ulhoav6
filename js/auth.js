@@ -25,7 +25,7 @@
     console.log("🪪 Token:", data.token);
 
     // Redireciona
-    window.location.href = 'listagem.html';
+    window.location.href = 'pages/listagem.html';
   } else {
     alert(data.erro || 'Erro no login');
   }

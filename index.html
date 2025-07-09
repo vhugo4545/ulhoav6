@@ -1,8 +1,42 @@
-﻿<script>
-  const user = sessionStorage.getItem('token');
-  if (user) {
-    window.location.href = 'pages/listagem.html';
-  } else {
-    window.location.href = 'pages/login.html';
-  }
-</script>
+﻿<!DOCTYPE html>
+<html lang='pt-BR'>
+<head>
+  <meta charset='UTF-8' />
+  <title>Login / Cadastro</title>
+  <link rel='stylesheet' href='../css/style.css' />
+</head>
+<body>
+  <div class='container' style='width: 350px; margin: auto;'>
+    <div id='loginForm'>
+      <h2>Login</h2>
+      <input type='email' id='loginEmail' placeholder='E-mail' />
+      <input type='password' id='loginSenha' placeholder='Senha' />
+      <button onclick='login()'>Entrar</button>
+      <div class='toggle' onclick='toggleForms()'>Não tem conta? Cadastre-se</div>
+    </div>
+
+    <div id='cadastroForm' style='display:none;'>
+      <h2>Cadastro</h2>
+      <input type='text' id='cadastroNome' placeholder='Nome completo' />
+      <input type='email' id='cadastroEmail' placeholder='E-mail' />
+      <input type='password' id='cadastroSenha' placeholder='Senha' />
+      <select id='cadastroTipo'>
+        <option value='usuario'>Usuário</option>
+        <option value='admin'>Administrador</option>
+      </select>
+      <button onclick='cadastrar()'>Cadastrar</button>
+      <div class='toggle' onclick='toggleForms()'>Já tem conta? Faça login</div>
+    </div>
+  </div>
+
+  <script src='../js/auth.js'></script>
+  <script>
+    function toggleForms() {
+      const login = document.getElementById('loginForm');
+      const cad = document.getElementById('cadastroForm');
+      login.style.display = login.style.display === 'none' ? 'block' : 'none';
+      cad.style.display = cad.style.display === 'none' ? 'block' : 'none';
+    }
+  </script>
+</body>
+</html>
