@@ -1,0 +1,8 @@
+﻿<script>
+  const user = sessionStorage.getItem('token');
+  if (user) {
+    window.location.href = 'pages/listagem.html';
+  } else {
+    window.location.href = 'pages/login.html';
+  }
+</script>
