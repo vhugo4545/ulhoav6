@@ -25,6 +25,8 @@ function preencherValoresFinanceiros(blocoId) {
   const miudezas = dados.miudezas / 100;
   const comissaoArquiteta = dados.comissao_arquiteta / 100;
   const margemSegunraca = dados.margem_seguranca / 100;
+
+  
   // Obter total da tabela (soma da coluna "Valor de Custo Final")
   const tabela = bloco.querySelector("table");
   let materialBase = 0;
@@ -70,7 +72,191 @@ function preencherValoresFinanceiros(blocoId) {
   const valorNegociacao = precoMinimo * negociacao;
   const valorMiudezas = materialBase * miudezas;
 
+const campoVAlorSegunrnçaDesperdicio = precoMinimo - precoMinimo / (1 + comissaoArquiteta + margemSegunraca);
+const campoValorGastosOperacionais = (precoMinimo-campoVAlorSegunrnçaDesperdicio)*(gastosTotais);
+
+const campoValorPorcentagemImpostos = impostos;
+const campoValorMinimo = precoMinimo;
+const campoValorImpostos = impostos * precoMinimo;
+
+const somaValotres = campoValorImpostos + custoMaterial + campoValorGastosOperacionais
+
+const campoValorSeguranca = precoMinimo - precoMinimo / (1 + comissaoArquiteta + margemSegunraca);
+const campoValorMargemLucro =  (campoValorMinimo-  somaValotres) - campoValorSeguranca ;
+const campoValorMiudezas = custoMaterial - custoMaterial / (1 + miudezas);
+const campoNegocia = precoSugerido - precoMinimo
+
+// Impressão dos valores calculados
+console.log("Valor Gastos Operacionais:", campoValorGastosOperacionais.toFixed(2));
+console.log("Margem de Lucro:", campoValorMargemLucro.toFixed(2));
+console.log("Valor Impostos:", campoValorImpostos.toFixed(2));
+console.log("Valor Mínimo:", campoValorMinimo.toFixed(2));
+console.log("Valor Margem + comissão arquiteto:", campoVAlorSegunrnçaDesperdicio.toFixed(2));
+console.log("Miudezas:", campoValorMiudezas.toFixed(2));
+console.log("Valor sugerido:", campoNegocia.toFixed(2));
+
+
+ adicionarBotaoResumoFinanceiro(blocoId)
+
+ }
+
+ 
+
+function adicionarBotaoResumoFinanceiro(blocoId) {
+  const bloco = document.getElementById(blocoId);
+  if (!bloco) return;
+
+  const botaoExistente = bloco.querySelector(".btn-detalhes-financeiros");
+  if (botaoExistente) return;
+
+  const botao = document.createElement("button");
+  botao.className = "btn btn-outline-info btn-sm btn-detalhes-financeiros";
+  botao.innerHTML = "📊 Ver Detalhes Financeiros";
+  botao.style.marginTop = "8px";
+
+  botao.addEventListener("click", () => {
+    abrirPopupValoresFinanceiros(blocoId);
+  });
+
+  const destino = bloco.querySelector(".tab-pane") || bloco;
+  destino.appendChild(botao);
+}
+
+function abrirPopupValoresFinanceiros(blocoId) {
+  const valores = calcularValoresFinanceiros(blocoId);
+  if (!valores) return;
+
+  const html = `
+    <div style="padding: 20px; font-size: 14px; max-width: 400px;">
+      <h5 class="mb-3">Resumo Financeiro</h5>
+      <ul class="list-group">
+        <li class="list-group-item">💰 <strong>Valor Gastos Operacionais:</strong> R$ ${valores.campoValorGastosOperacionais.toFixed(2)}</li>
+        <li class="list-group-item">📈 <strong>Margem de Lucro:</strong> R$ ${valores.campoValorMargemLucro.toFixed(2)}</li>
+        <li class="list-group-item">🧾 <strong>Valor Impostos:</strong> R$ ${valores.campoValorImpostos.toFixed(2)}</li>
+        <li class="list-group-item">💼 <strong>Valor Mínimo:</strong> R$ ${valores.campoValorMinimo.toFixed(2)}</li>
+        <li class="list-group-item">🏗 <strong>Margem + Comissão Arquiteto:</strong> R$ ${valores.campoVAlorSegunrnçaDesperdicio.toFixed(2)}</li>
+        <li class="list-group-item">📦 <strong>Miudezas:</strong> R$ ${valores.campoValorMiudezas.toFixed(2)}</li>
+        <li class="list-group-item">📝 <strong>Valor Sugerido (Negociação):</strong> R$ ${valores.campoNegocia.toFixed(2)}</li>
+      </ul>
+      <div class="text-end mt-3">
+        <button class="btn btn-sm btn-secondary" onclick="this.closest('.popup-financeiro').remove()">Fechar</button>
+      </div>
+    </div>
+  `;
+
+  const popup = document.createElement("div");
+  popup.className = "popup-financeiro";
+  popup.innerHTML = html;
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.backgroundColor = "#fff";
+  popup.style.border = "1px solid #ccc";
+  popup.style.borderRadius = "12px";
+  popup.style.boxShadow = "0 4px 20px rgba(0,0,0,0.2)";
+  popup.style.zIndex = 10000;
+
+  document.body.appendChild(popup);
+}
+
+
+function exibirResumoFinanceiroConsole(blocoId) {
+  const bloco = document.getElementById(blocoId);
+  if (!bloco) return;
+
+  const valoresCalculados = calcularValoresFinanceiros(blocoId);
+  if (!valoresCalculados) return;
+
+  console.log("Valor Gastos Operacionais:", valoresCalculados.campoValorGastosOperacionais.toFixed(2));
+  console.log("Margem de Lucro:", valoresCalculados.campoValorMargemLucro.toFixed(2));
+  console.log("Valor Impostos:", valoresCalculados.campoValorImpostos.toFixed(2));
+  console.log("Valor Mínimo:", valoresCalculados.campoValorMinimo.toFixed(2));
+  console.log("Valor Margem + comissão arquiteto:", valoresCalculados.campoVAlorSegunrnçaDesperdicio.toFixed(2));
+  console.log("Miudezas:", valoresCalculados.campoValorMiudezas.toFixed(2));
+  console.log("Valor sugerido:", valoresCalculados.campoNegocia.toFixed(2));
+}
+
+function calcularValoresFinanceiros(blocoId) {
+  const bloco = document.getElementById(blocoId);
+  if (!bloco) return null;
+
+  const inputs = bloco.querySelectorAll('input[name]');
+  const dados = {};
+  inputs.forEach(input => {
+    const nome = input.name;
+    const valor = input.value.trim().replace(',', '.').replace('R$', '');
+    dados[nome] = parseFloat(valor) || 0;
+  });
+
+  const impostos = dados.impostos / 100;
+  const margemLucro = dados.margem_lucro / 100;
+  const gastosTotais = dados.gasto_operacional / 100;
+  const negociacao = dados.margem_negociacao / 100;
+  const miudezas = dados.miudezas / 100;
+  const comissaoArquiteta = dados.comissao_arquiteta / 100;
+  const margemSegunraca = dados.margem_seguranca / 100;
+
+  const tabela = bloco.querySelector("table");
+  let materialBase = 0;
+  tabela.querySelectorAll("tbody tr").forEach(linha => {
+    const valorStr = linha.querySelector(".custo-unitario")?.textContent?.replace("R$", "").replace(",", ".");
+    const valor = parseFloat(valorStr || 0);
+    materialBase += valor;
+  });
+
+  const custoMaterial = materialBase * (1 + miudezas);
+  const divisor = 1 - (gastosTotais + margemLucro + impostos);
+  if (divisor <= 0) {
+    console.error("❌ Erro: soma dos percentuais maior ou igual a 100%");
+    return null;
   }
+
+  const precoMinimo = (custoMaterial / divisor) * (1 + (comissaoArquiteta + margemSegunraca));
+  const precoSugerido = precoMinimo * (1 + negociacao);
+
+  const campoVAlorSegunrnçaDesperdicio = precoMinimo - precoMinimo / (1 + comissaoArquiteta + margemSegunraca);
+  const campoValorGastosOperacionais = (precoMinimo - campoVAlorSegunrnçaDesperdicio) * gastosTotais;
+  const campoValorPorcentagemImpostos = impostos;
+  const campoValorMinimo = precoMinimo;
+  const campoValorImpostos = impostos * precoMinimo;
+  const somaValotres = campoValorImpostos + custoMaterial + campoValorGastosOperacionais;
+  const campoValorSeguranca = precoMinimo - precoMinimo / (1 + comissaoArquiteta + margemSegunraca);
+  const campoValorMargemLucro = (campoValorMinimo - somaValotres) - campoValorSeguranca;
+  const campoValorMiudezas = custoMaterial - custoMaterial / (1 + miudezas);
+  const campoNegocia = precoSugerido - precoMinimo;
+
+  return {
+    campoVAlorSegunrnçaDesperdicio,
+    campoValorGastosOperacionais,
+    campoValorPorcentagemImpostos,
+    campoValorMinimo,
+    campoValorImpostos,
+    campoValorSeguranca,
+    campoValorMargemLucro,
+    campoValorMiudezas,
+    campoNegocia
+  };
+}
+
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".main-container").forEach(bloco => {
+    adicionarBotaoResumoFinanceiro(bloco.id);
+  });
+});
+
+
+
+
+
+
+
+
+
+
+
 
 // 🔁 Ativa o recálculo automático ao alterar qualquer input[name]
 document.addEventListener('input', function (e) {
